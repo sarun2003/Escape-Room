@@ -27,14 +27,12 @@ public class Object
             break;
 
         }
-        
     }
 
     //Drop object from held or inventory where you stand
     public void DropObject()
     {
         m_state = ObjectState.STATIC;
-        
     }
 
     //Place an object into inventory

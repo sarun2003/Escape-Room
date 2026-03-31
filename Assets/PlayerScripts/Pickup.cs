@@ -52,7 +52,6 @@ public class PickupObjects : MonoBehaviour
     {
         if (holdAction.IsPressed())
         {   
-            Debug.Log("holding");
             //Buffer holding. will only change to HOLDING when an object is present and BUFFERING is the current state
             switch (GameManager.Instance.CurrentPlayerInputState)
             {
@@ -67,6 +66,8 @@ public class PickupObjects : MonoBehaviour
             {
                 case PlayerInputState.HOLDING:
                 GameManager.Instance.CurrentPlayerInputState = PlayerInputState.NONE;
+                heldObject.GetComponent<ObjectProperties>().m_self.DropObject();
+                heldObject = null;
                 break;
 
                 case PlayerInputState.BUFFERING:
@@ -75,7 +76,7 @@ public class PickupObjects : MonoBehaviour
             }
         }
 
-
+        //Double safety check. probably not needed
         if (!hitObject && GameManager.Instance.CurrentPlayerInputState != PlayerInputState.HOLDING)
             heldObject = null;
 
@@ -166,7 +167,7 @@ hit point (world space)
 
 calculate an offset relative from cube center to hit point (local)
 move object center to target point - offset every frame
-rotate around offset point (local space)
+rotate around offset point (local space) <--- next up
 
 
 
