@@ -4,11 +4,12 @@ public class ObjectProperties : MonoBehaviour
 {
     //Higher = Lighter
     //Sorry
-    public float m_mass = 10f;
-    public Object m_self;
+    public float m_velocity = 10f;
+    public Item m_self;
     void Start()
     {
-        m_self = new Object();
+        m_self = new Item();
+        m_self.m_gameObject = gameObject;
         m_self.DropObject();
     }
 

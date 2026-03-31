@@ -1,0 +1,95 @@
+{
+    "version": 1,
+    "name": "ObjectActions",
+    "maps": [
+        {
+            "name": "Normal",
+            "id": "20a780ca-2f5f-4f23-932e-2b70607f2b6b",
+            "actions": [
+                {
+                    "name": "Holding",
+                    "type": "Button",
+                    "id": "7c703c7c-964c-4183-ae74-b049bf475888",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Quickslot1",
+                    "type": "Button",
+                    "id": "5a9e0b69-c6d7-4d29-81eb-6a1358657942",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Quickslot2",
+                    "type": "Button",
+                    "id": "c5b2fe06-e1be-4fc4-bf47-bb8d313e8872",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Quickslot3",
+                    "type": "Button",
+                    "id": "044a3ece-372f-4341-8118-29b0127b4257",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "fc9f9c97-78cd-4820-b328-7dc46a68886f",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Holding",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bdba4945-95c2-49d0-ad1e-4609efbc292b",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Quickslot1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0cf7542f-7c40-4aef-94e8-15c82f5d8abb",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Quickslot2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "09833a00-c242-4739-9a78-f7f4fa07fd53",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Quickslot3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
