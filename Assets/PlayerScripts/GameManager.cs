@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
     
     public PlayerInputState CurrentPlayerInputState { get; set; } = PlayerInputState.NONE; 
 
+    [SerializeField]
+    public Material OutlineMaterial;
+
 
     [SerializeField]
     public int m_maxInv = 3;
@@ -45,7 +48,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject); 
 
-            PlayerInventory = new Inventory(m_maxInv);
+            PlayerInventory = new(m_maxInv);
         }
     }
 

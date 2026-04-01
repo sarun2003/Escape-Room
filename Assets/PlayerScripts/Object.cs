@@ -10,7 +10,7 @@ public enum ObjectState
 
 public class Item
 {
-    private ObjectState m_state = ObjectState.STATIC;
+    public ObjectState m_state { get; private set; }
     public GameObject m_gameObject;
 
     //Hold object from world or inventory

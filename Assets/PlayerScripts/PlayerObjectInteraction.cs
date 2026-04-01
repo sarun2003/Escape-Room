@@ -6,6 +6,7 @@ public class PlayerObjectInteraction : MonoBehaviour
 {
     LayerMask layerMask;
     GameObject heldObject;
+    GameObject hoveredObject;
 
 
 
@@ -88,6 +89,7 @@ public class PlayerObjectInteraction : MonoBehaviour
             if (obj.StoreObject(index) != -1)
             {
                 obj.m_gameObject.SetActive(false);
+                GameManager.Instance.CurrentPlayerInputState = PlayerInputState.NONE;
                 return; 
             }
                 
@@ -98,6 +100,7 @@ public class PlayerObjectInteraction : MonoBehaviour
             {
                 //Object restored successfully, delete from scene
                 obj.m_gameObject.SetActive(false);
+                GameManager.Instance.CurrentPlayerInputState = PlayerInputState.NONE;
                 return;
             } else
             {
@@ -127,19 +130,22 @@ public class PlayerObjectInteraction : MonoBehaviour
 
                 case PlayerInputState.HOLDING: //Check for quickslot inputs, Can add more later
                 if (QS1.WasPressedThisFrame())
-                {
+                {   
                     //Attempt to assign to Inv slot 1
-                    TryStoreAtIndex(heldObject.GetComponent<ObjectProperties>().m_self, 0);
+                    if (heldObject.GetComponent<ObjectProperties>().m_canBeStored)
+                        TryStoreAtIndex(heldObject.GetComponent<ObjectProperties>().m_self, 0);
                     
                 } else if (QS2.WasPressedThisFrame())
                 {
                     //Attempt to assign to Inv slot 2
-                    TryStoreAtIndex(heldObject.GetComponent<ObjectProperties>().m_self, 1);
+                    if (heldObject.GetComponent<ObjectProperties>().m_canBeStored)
+                        TryStoreAtIndex(heldObject.GetComponent<ObjectProperties>().m_self, 1);
 
                 } else if (QS3.WasPressedThisFrame())
                 {
                     //Attempt to assign to Inv slot 3
-                    TryStoreAtIndex(heldObject.GetComponent<ObjectProperties>().m_self, 2);
+                    if (heldObject.GetComponent<ObjectProperties>().m_canBeStored)
+                        TryStoreAtIndex(heldObject.GetComponent<ObjectProperties>().m_self, 2);
 
                 }
                 break;
@@ -191,17 +197,28 @@ public class PlayerObjectInteraction : MonoBehaviour
             heldObject = null;
 
 
+        if (hoveredObject != null)
+            hoveredObject.GetComponent<ObjectProperties>().m_hovered = hitObject;
+        
+        
+
         //Mainly for debugging
         if (hitObject)
         {
+
             hitPointVisualizer.SetActive(true);
             hitPointVisualizer.transform.position = hit.point;
-            
+            if (hit.collider != null)
+                hoveredObject = hit.collider.gameObject;
+                
         } else
-        {
-            hitPointVisualizer.SetActive(false);
+        {  
+            hitPointVisualizer.SetActive(false);  
+            hoveredObject = null;
         }
 
+        
+    
 
         switch (GameManager.Instance.CurrentPlayerInputState)
         {
