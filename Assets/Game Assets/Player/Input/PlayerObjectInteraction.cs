@@ -54,7 +54,10 @@ public class PlayerObjectInteraction : MonoBehaviour
 
 
     private void Awake()
-    {
+    {   
+
+        
+
         Physics.IgnoreLayerCollision(3, 7); //Ignore collisions between player and ObjectsIC (Ignore collision)
         holdAction = objectActions["Holding"];
         //Only 3 for now
@@ -66,6 +69,8 @@ public class PlayerObjectInteraction : MonoBehaviour
         
         layerMask = LayerMask.GetMask("Objects", "ObjectsIC", "Player");
         hitPointVisualizer = Instantiate(hitPointVisualizerPrefab);
+
+        hitPointVisualizer.SetActive(false);
         
     }
 
@@ -135,7 +140,7 @@ public class PlayerObjectInteraction : MonoBehaviour
     {   
         
         
-        
+        ObjectDropPoint = transform.position + (transform.TransformDirection(Vector3.forward) * viewDist);
 
         if (holdAction.IsPressed())
         {   
@@ -224,6 +229,7 @@ public class PlayerObjectInteraction : MonoBehaviour
         
 
         //Mainly for debugging
+        /*
         if (hitObject)
         {
 
@@ -237,6 +243,15 @@ public class PlayerObjectInteraction : MonoBehaviour
             hitPointVisualizer.SetActive(false);  
             hoveredObject = null;
         }
+        */
+        if (hitObject)
+        {
+            if (hit.collider != null) hoveredObject = hit.collider.gameObject;
+        } else
+        {
+            hoveredObject = null;
+        }
+        
 
         
     
@@ -251,15 +266,19 @@ public class PlayerObjectInteraction : MonoBehaviour
             //Already holding an object, only update held object
 
             //Debugging
-            hitPointVisualizer.SetActive(true);
-            hitPointVisualizer.transform.position = ObjectPointOffset + heldObject.transform.position;
+            //hitPointVisualizer.SetActive(true);
+            //hitPointVisualizer.transform.position = ObjectPointOffset + heldObject.transform.position;
             Rigidbody rb = heldObject.GetComponent<Rigidbody>();
             
             Vector3 targetPosition = transform.position + transform.forward * hitDistance;
             Vector3 trueTarget = targetPosition - ObjectPointOffset;
 
             Vector3 direction = trueTarget - heldObject.transform.position;
-            heldObject.GetComponent<Rigidbody>().AddForce(direction * heldObject.GetComponent<ObjectProperties>().m_velocity, ForceMode.Force);
+            rb.AddForce(direction * heldObject.GetComponent<ObjectProperties>().m_velocity, ForceMode.Force);
+            
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; // prevents tunneling
+            rb.interpolation = RigidbodyInterpolation.Interpolate; // smooth movement
+            rb.maxDepenetrationVelocity = 10f; // optional: prevents high-speed clipping
             rb.angularVelocity *= 0.95f;
             rb.linearVelocity *= 0.95f;
 
