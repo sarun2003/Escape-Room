@@ -12,6 +12,7 @@ public class ObjectProperties : MonoBehaviour
 
     [Header("Gem Properties")]
     public float m_magneticAttraction = 0;
+    public bool m_attractsGem = false;
 
     [Header("Outline Properties")]
     [SerializeField]
@@ -20,6 +21,7 @@ public class ObjectProperties : MonoBehaviour
     private Color m_customColor;
     [SerializeField]
     private float hoverRadius = 10f;
+    public Vector3 camPos;
 
 
     [Header("Other")]
@@ -90,7 +92,7 @@ public class ObjectProperties : MonoBehaviour
 
     public virtual void Update()
     {
-        //UpdateObjectOutline();
+        
     }
 
     public virtual void UpdateObjectAttraction()
@@ -102,15 +104,14 @@ public class ObjectProperties : MonoBehaviour
                 Vector3 direction = (gem.transform.position - transform.position);
                 float distance = direction.magnitude;
 
-                // Normalize direction so force is consistent
+                
                 direction.Normalize();
 
-                // Strength falls off with distance (optional but recommended)
+                
                 float forceStrength = m_magneticAttraction / Mathf.Max(distance, 0.1f);
 
                 rb.AddForce(direction * forceStrength, ForceMode.Acceleration);
 
-                // Physics settings (you don't need to set these every frame ideally)
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
                 rb.interpolation = RigidbodyInterpolation.Interpolate;
 

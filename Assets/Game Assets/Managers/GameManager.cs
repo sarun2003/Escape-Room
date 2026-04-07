@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum PlayerState
@@ -26,6 +27,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     public Material OutlineMaterial;
+    public bool PlayerHoveringObject = false;
+    public List<GameObject> magneticObjects;
 
 
     [SerializeField]
@@ -48,6 +51,15 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject); 
 
             PlayerInventory = new(m_maxInv);
+            ObjectProperties[] allObjects = Object.FindObjectsByType<ObjectProperties>(FindObjectsSortMode.None);
+
+            foreach (var obj in allObjects)
+            {
+                if (obj.m_attractsGem)
+                {
+                    magneticObjects.Add(obj.gameObject);
+                }
+            }
         }
     }
 

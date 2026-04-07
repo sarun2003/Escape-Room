@@ -7,6 +7,7 @@ public class PlayerObjectInteraction : MonoBehaviour
     LayerMask layerMask;
     GameObject heldObject;
     GameObject hoveredObject;
+    private bool hoveringObject = false;
 
 
 
@@ -90,20 +91,21 @@ public class PlayerObjectInteraction : MonoBehaviour
         if (hitAny)
         {
             ObjectDropPoint = dpHit.point + dpHit.normal * 0.1f;
-
-
-            
-
-
         } else
         {
             ObjectDropPoint = transform.position + (transform.TransformDirection(Vector3.forward) * viewDist);
         }
 
         obj.DropObject();
-        obj.m_gameObject.SetActive(true);
+        //obj.m_gameObject.SetActive(true);
         obj.m_gameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+        obj.m_gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         obj.m_gameObject.transform.position = ObjectDropPoint;
+
+        if (heldObject == obj.m_gameObject)
+            heldObject = null;
+
+        obj.DropObject();
         
         
     }
@@ -116,7 +118,11 @@ public class PlayerObjectInteraction : MonoBehaviour
             //Object stored successfully, delete from scene
             if (obj.StoreObject(index) != -1)
             {
-                obj.m_gameObject.SetActive(false);
+                //obj.m_gameObject.SetActive(false);
+                Vector3 newPos = HUDManager.Instance.InventorySlots[index].GetComponent<InventorySlot>().camera.transform.parent.gameObject.transform.position;
+                obj.m_gameObject.transform.position = newPos + new Vector3(2, 2, -2);
+                obj.m_gameObject.transform.LookAt(HUDManager.Instance.InventorySlots[index].GetComponent<InventorySlot>().camera.transform.position);
+                obj.m_gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
                 GameManager.Instance.CurrentPlayerInputState = PlayerInputState.NONE;
                 return; 
             }
@@ -127,7 +133,12 @@ public class PlayerObjectInteraction : MonoBehaviour
             if (status != -1)
             {
                 //Object restored successfully, delete from scene
-                obj.m_gameObject.SetActive(false);
+                //obj.m_gameObject.SetActive(false);
+                Vector3 newPos = HUDManager.Instance.InventorySlots[status].GetComponent<InventorySlot>().camera.transform.parent.gameObject.transform.position;
+                obj.m_gameObject.transform.position = newPos + new Vector3(2, 2, 2);
+                obj.m_gameObject.GetComponent<ObjectProperties>().camPos = HUDManager.Instance.InventorySlots[index].GetComponent<InventorySlot>().camera.transform.position;
+                obj.m_gameObject.transform.LookAt(obj.m_gameObject.GetComponent<ObjectProperties>().camPos);
+                obj.m_gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
                 GameManager.Instance.CurrentPlayerInputState = PlayerInputState.NONE;
                 return;
             } else
@@ -214,7 +225,7 @@ public class PlayerObjectInteraction : MonoBehaviour
     //Cast a ray from viewport center to a max length and if an object is hit, get its info and give it options
     void FixedUpdate()
     {
-
+        GameManager.Instance.PlayerHoveringObject = hoveringObject;
 
         //Does the ray intersect any objects excluding the player layer
         hitObject = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, viewDist, layerMask);
@@ -252,10 +263,15 @@ public class PlayerObjectInteraction : MonoBehaviour
         */
         if (hitObject)
         {
-            if (hit.collider != null) hoveredObject = hit.collider.gameObject;
+            if (hit.collider != null)  {
+                hoveredObject = hit.collider.gameObject;
+                hoveringObject = true;
+                
+            }
         } else
         {
             hoveredObject = null;
+            hoveringObject = false;
         }
         
 
