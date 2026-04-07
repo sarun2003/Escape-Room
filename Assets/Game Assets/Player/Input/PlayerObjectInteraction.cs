@@ -85,11 +85,16 @@ public class PlayerObjectInteraction : MonoBehaviour
         Item obj = GameManager.PlayerInventory.PopObjectAtIndex(index);
 
         //If ray collided with anything, set that point - half of the stored objects width  to the new drop point, otherwise use the other formula
-        hitAny = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out dpHit, viewDist, 0);
+        hitAny = Physics.Raycast(transform.position, transform.forward, out dpHit, viewDist, ~0);
 
         if (hitAny)
         {
-            ObjectDropPoint = dpHit.collider.transform.position;
+            ObjectDropPoint = dpHit.point + dpHit.normal * 0.1f;
+
+
+            
+
+
         } else
         {
             ObjectDropPoint = transform.position + (transform.TransformDirection(Vector3.forward) * viewDist);
@@ -97,6 +102,7 @@ public class PlayerObjectInteraction : MonoBehaviour
 
         obj.DropObject();
         obj.m_gameObject.SetActive(true);
+        obj.m_gameObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         obj.m_gameObject.transform.position = ObjectDropPoint;
         
         
@@ -274,7 +280,7 @@ public class PlayerObjectInteraction : MonoBehaviour
             Vector3 trueTarget = targetPosition - ObjectPointOffset;
 
             Vector3 direction = trueTarget - heldObject.transform.position;
-            rb.AddForce(direction * heldObject.GetComponent<ObjectProperties>().m_velocity, ForceMode.Force);
+            rb.AddForce(direction * 10, ForceMode.Force);
             
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; // prevents tunneling
             rb.interpolation = RigidbodyInterpolation.Interpolate; // smooth movement

@@ -8,21 +8,58 @@ public enum ObjectState
     STORED          //In player inveentory (not in scene)
 };
 
+public enum LockedObjectState
+{
+    UNLOCKED,
+    LOCKED
+}
+
 public enum ObjectTypeColor
 {
     PROGRESSION, //progression items like keys
     EQUIPMENT, //equipment like scuba mask
     TOOLS, //tools like gem
     HINTS, //hints like notes and other
+    OTHER, //Locked items, special colors, etc
     NONE
 
 };
+
+public class ObjectInteractable : Item
+{
+    public LockedObjectState m_lockedState { get; private set; }
+    
+
+    public void SwapState()
+    {
+        
+    }
+
+    public void Lock()
+    {
+        m_lockedState = LockedObjectState.LOCKED;
+        SetColorType(ObjectTypeColor.OTHER);
+        SetCustomColor(new(1, 0, 0));
+    }
+
+    public void Unlock()
+    {
+        m_lockedState = LockedObjectState.UNLOCKED;
+        SetColorType(ObjectTypeColor.NONE);
+    }
+
+
+
+
+
+}
 
 
 
 public class Item
 {
     public ObjectState m_state { get; private set; }
+    public Color m_customColor { get; private set; }
     public GameObject m_gameObject;
     public ObjectTypeColor m_type;
 
@@ -34,6 +71,7 @@ public class Item
             case ObjectTypeColor.EQUIPMENT: return ConvertColor(255, 75, 25);
             case ObjectTypeColor.TOOLS: return ConvertColor(161, 54, 255);
             case ObjectTypeColor.HINTS: return ConvertColor(23, 158, 255);
+            case ObjectTypeColor.OTHER: return m_customColor;
             case ObjectTypeColor.NONE:
                 break;
         }
@@ -49,6 +87,13 @@ public class Item
     {
         m_type = type;
     }
+
+    public void SetCustomColor(Color color)
+    {
+        m_customColor = color;
+        m_type = ObjectTypeColor.OTHER;
+    }
+
 
     //Hold object from world or inventory
     public void HoldObject()

@@ -17,6 +17,8 @@ public class ObjectProperties : MonoBehaviour
     [SerializeField]
     private ObjectTypeColor m_colorType;
     [SerializeField]
+    private Color m_customColor;
+    [SerializeField]
     private float hoverRadius = 10f;
 
 
@@ -28,8 +30,9 @@ public class ObjectProperties : MonoBehaviour
     private GameObject gem = null;
     private Rigidbody rb = null;
 
-    void Start()
+    public virtual void Start()
     {   
+        
         if (!gameObject.CompareTag("Gem")) 
         {
             gem = GameObject.FindWithTag("Gem");
@@ -38,9 +41,15 @@ public class ObjectProperties : MonoBehaviour
         
         m_self = new()
         {
-            m_gameObject = gameObject,
-            m_type = m_colorType
+            m_gameObject = gameObject
         };
+        if (m_colorType == ObjectTypeColor.OTHER)
+        {
+            m_self.SetCustomColor(m_customColor);
+        } else
+        {
+            m_self.SetColorType(m_colorType);
+        }
         m_self.DropObject();
         
 
@@ -51,19 +60,23 @@ public class ObjectProperties : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void UpdateObjectOutline()
     {
-        bool shouldHaveOutline = m_hovered || m_self.m_state == ObjectState.HELD;
+        bool shouldHaveOutline = (m_hovered && GameManager.Instance.CurrentPlayerInputState != PlayerInputState.HOLDING) || (m_self.m_state == ObjectState.HELD && GameManager.Instance.CurrentPlayerInputState == PlayerInputState.HOLDING);
 
         if (shouldHaveOutline)
         {
             if (outline == null) // Only add once
             {
                 outline = gameObject.AddComponent<Outline>();
+                outline.enabled = false;
                 outline.OutlineMode = Outline.Mode.OutlineAll;
-                outline.OutlineColor = m_self.GetColor();
                 outline.OutlineWidth = hoverRadius;
+                
             }
+            
+            outline.OutlineColor = m_self.GetColor();
+            outline.enabled = true;
         }
         else
         {
@@ -75,7 +88,12 @@ public class ObjectProperties : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    public virtual void Update()
+    {
+        //UpdateObjectOutline();
+    }
+
+    public virtual void UpdateObjectAttraction()
     {
         if (gem != null)
         {
@@ -100,6 +118,11 @@ public class ObjectProperties : MonoBehaviour
                 rb.linearVelocity *= 0.95f;
             }
         }
-        
+    }
+
+    public virtual void FixedUpdate()
+    {
+        UpdateObjectAttraction();
+        UpdateObjectOutline();
     }
 }
