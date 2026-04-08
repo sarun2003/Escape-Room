@@ -183,6 +183,15 @@ public class Inventory
         }
     }
 
+    public bool ContainsObject(GameObject obj)
+    {
+        for (int i = 0; i < m_items.Length; i++)
+        {
+            if (!m_items[i].Equals(obj)) return true;
+        }
+        return false;
+    }
+
     //Does not update array
     public Item GetObjectAtIndex(int index)
     {
