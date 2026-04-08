@@ -95,6 +95,7 @@ public class PlayerObjectInteraction : MonoBehaviour
         Rigidbody rb = obj.m_gameObject.GetComponent<Rigidbody>();
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+        rb.constraints = RigidbodyConstraints.None;
 
         obj.m_gameObject.transform.position = ObjectDropPoint;
 
@@ -319,6 +320,13 @@ public class PlayerObjectInteraction : MonoBehaviour
             //hitPointVisualizer.transform.position = ObjectPointOffset + heldObject.transform.position;
             
             if (heldObject == null) break; 
+
+            if (heldObject.GetComponent<ObjectProperties>().m_self.m_equipable)
+            {
+                TryStoreAtIndex(heldObject.GetComponent<ObjectProperties>().m_self, 0);
+                GameManager.Instance.CurrentPlayerInputState = PlayerInputState.BUFFERING;
+                break;
+            }
 
             Rigidbody rb = heldObject.GetComponent<Rigidbody>();
             Vector3 targetPosition = transform.position + transform.forward * hitDistance;

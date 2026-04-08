@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public enum PlayerState
 {
-    MENU,           //In a menu, such as a main menu
-    PLAY,           //Playing game
-    INTERFACE       //In an interface, such as a combination lock
+    ACTIVE,           
+    DEAD,        
+    WIN      
 };
 
 public enum PlayerInputState
@@ -22,13 +23,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; } //used for timers and states
     public static Inventory PlayerInventory { get; private set; }
+    public float TimeLeft = 5 * 60;
     //Add in inspector
     [SerializeField]
     public Dictionary<string, GameObject> ProgressionItems = new Dictionary<string, GameObject>();
     public List<GameObject> pickupObjects = new List<GameObject>();
 
-    public PlayerState CurrentPlayerState { get; set; } = PlayerState.PLAY;
+    public PlayerState CurrentPlayerState { get; set; } = PlayerState.ACTIVE;
     public GameObject Player { get; private set; }
+    public GameObject PlayerParent { get; private set; }
     
     public PlayerInputState CurrentPlayerInputState { get; set; } = PlayerInputState.NONE; 
 
@@ -44,6 +47,48 @@ public class GameManager : MonoBehaviour
     //Debugging States
     [SerializeField]
     private PlayerInputState state1;
+
+    public void UpdateConditions()
+    {
+        if (Instance.ProgressionItems.ContainsKey("DivingGear") && PlayerInventory.ContainsObject(Instance.ProgressionItems["DivingGear"]))
+        {
+            //Win
+            Instance.CurrentPlayerState = PlayerState.WIN;
+        } else
+        {
+            //Kill Player & reset
+            Instance.CurrentPlayerState = PlayerState.DEAD;
+        }
+    }
+
+    public void UpdateScene()
+    {
+        Debug.Log(Instance.CurrentPlayerState);
+        switch (Instance.CurrentPlayerState)
+        {
+            case PlayerState.ACTIVE:
+            break;
+
+            case PlayerState.DEAD:
+            
+            Destroy(HUDManager.Instance.gameObject);
+            Destroy(Instance.gameObject);
+            SceneManager.LoadScene("scene1");
+            break;
+
+            case PlayerState.WIN:
+            Destroy(HUDManager.Instance.gameObject);
+            Destroy(SoundManager.Instance.gameObject);
+            Destroy(Instance.gameObject);
+            SceneManager.LoadScene("scene1"); //change to win scene here first
+            break;
+
+        }
+    }
+
+
+
+
     private GameObject[] FindGameObjectsInLayer(int[] layers) {
         GameObject[] goArray = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         var goList = new System.Collections.Generic.List<GameObject>();
@@ -96,11 +141,14 @@ public class GameManager : MonoBehaviour
             }
 
             Player = GameObject.FindGameObjectWithTag("CinemachineTarget");
+            PlayerParent = GameObject.FindGameObjectWithTag("Player");
+
+            SoundManager.Instance.FadeInLoop("ambiance");
         }
     }
 
     private void Update()
     {
-        state1 = CurrentPlayerInputState;
+        TimeLeft -= Time.deltaTime;
     }
 }

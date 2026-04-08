@@ -30,11 +30,6 @@ public class ObjectInteractable : Item
     public LockedObjectState m_lockedState { get; private set; }
     
 
-    public void SwapState()
-    {
-        
-    }
-
     public void Lock()
     {
         m_lockedState = LockedObjectState.LOCKED;
@@ -54,9 +49,12 @@ public class ObjectInteractable : Item
 
 }
 
-public class ItemEquipable : Item
+public class ObjectEquipable : Item
 {
-   
+    public ObjectEquipable()
+    {
+        m_equipable = true;
+    }
 }
 
 
@@ -67,6 +65,7 @@ public class Item
     public Color m_customColor { get; private set; }
     public GameObject m_gameObject;
     public ObjectTypeColor m_type;
+    public bool m_equipable = false;
 
     public Color GetColor()
     {
@@ -186,7 +185,8 @@ public class Inventory
     public bool ContainsObject(GameObject obj)
     {
         for (int i = 0; i < m_items.Length; i++)
-        {
+        {   
+            if (m_items[i] == null) return false;
             if (!m_items[i].Equals(obj)) return true;
         }
         return false;

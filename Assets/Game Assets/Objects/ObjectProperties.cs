@@ -137,4 +137,6 @@ public class ObjectProperties : MonoBehaviour
         }
         UpdateObjectOutline();
     }
+
+    
 }

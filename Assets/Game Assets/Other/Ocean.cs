@@ -19,18 +19,8 @@ public class Ocean : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            if (GameManager.Instance.ProgressionItems.ContainsKey("DivingGear") && GameManager.PlayerInventory.ContainsObject(GameManager.Instance.ProgressionItems["DivingGear"]))
-            {
-                //Win
-                SceneManager.LoadScene("scene1");
-            } else
-            {
-                //Kill Player & reset
-                Destroy(HUDManager.Instance.gameObject);
-                Destroy(GameManager.Instance.gameObject);
-                SceneManager.LoadScene("scene1");
-
-            }
+            SoundManager.Instance.FadeOutLoop("ambiance");
+            GameManager.Instance.UpdateConditions();
         }
     }
 }
