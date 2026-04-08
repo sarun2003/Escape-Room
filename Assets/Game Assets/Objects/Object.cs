@@ -54,6 +54,11 @@ public class ObjectInteractable : Item
 
 }
 
+public class ItemEquipable : Item
+{
+   
+}
+
 
 
 public class Item

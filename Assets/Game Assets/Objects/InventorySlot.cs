@@ -4,8 +4,11 @@ using UnityEngine.UI;
 
 class InventorySlot : MonoBehaviour
 {
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
     public Camera camera;
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
     public RenderTexture rt;
+    public GameObject position;
     public int index = 0;
     void Start()
     {

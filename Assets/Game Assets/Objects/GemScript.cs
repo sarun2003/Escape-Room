@@ -47,4 +47,5 @@ public class GemScript : MonoBehaviour
         gemRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         gemRb.interpolation = RigidbodyInterpolation.Interpolate;
     }
+    
 }

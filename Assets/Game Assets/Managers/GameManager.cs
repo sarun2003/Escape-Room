@@ -1,5 +1,8 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public enum PlayerState
 {
@@ -19,9 +22,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; } //used for timers and states
     public static Inventory PlayerInventory { get; private set; }
-
+    //Add in inspector
+    [SerializeField]
+    public Dictionary<string, GameObject> ProgressionItems = new Dictionary<string, GameObject>();
+    public List<GameObject> pickupObjects = new List<GameObject>();
 
     public PlayerState CurrentPlayerState { get; set; } = PlayerState.PLAY;
+    public GameObject Player { get; private set; }
     
     public PlayerInputState CurrentPlayerInputState { get; set; } = PlayerInputState.NONE; 
 
@@ -37,6 +44,19 @@ public class GameManager : MonoBehaviour
     //Debugging States
     [SerializeField]
     private PlayerInputState state1;
+    private GameObject[] FindGameObjectsInLayer(int[] layers) {
+        GameObject[] goArray = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+        var goList = new System.Collections.Generic.List<GameObject>();
+        for (int j = 0; j < layers.Length; j++)
+        {
+            for (int i = 0; i < goArray.Length; i++) {
+                if (goArray[i].layer == layers[j]) goList.Add(goArray[i]);
+            }
+        }
+        
+        
+        return goList.Count > 0 ? goList.ToArray() : null;
+    }
 
     private void Awake()
     {
@@ -51,7 +71,9 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject); 
 
             PlayerInventory = new(m_maxInv);
-            ObjectProperties[] allObjects = Object.FindObjectsByType<ObjectProperties>(FindObjectsSortMode.None);
+            ObjectProperties[] allObjects = FindObjectsByType<ObjectProperties>(FindObjectsSortMode.None);
+            GameObject[] progressionObjs = GameObject.FindGameObjectsWithTag("Progression");
+            GameObject[] pickupObjs = FindGameObjectsInLayer(new int[] { 6, 7 });
 
             foreach (var obj in allObjects)
             {
@@ -60,6 +82,20 @@ public class GameManager : MonoBehaviour
                     magneticObjects.Add(obj.gameObject);
                 }
             }
+
+            foreach (var obj in progressionObjs)
+            {
+                ProgressionItems[obj.name] = obj;
+                Debug.Log(ProgressionItems[obj.name].name);
+            }
+
+            foreach (var obj in pickupObjs)
+            {
+                pickupObjects.Add(obj);
+                Debug.Log(obj.name);
+            }
+
+            Player = GameObject.FindGameObjectWithTag("CinemachineTarget");
         }
     }
 

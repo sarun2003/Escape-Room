@@ -101,7 +101,7 @@ public class ObjectProperties : MonoBehaviour
         {
             if (m_magneticAttraction > 0 && gem.activeSelf)
             {   
-                Vector3 direction = (gem.transform.position - transform.position);
+                Vector3 direction = gem.transform.position - transform.position;
                 float distance = direction.magnitude;
 
                 
@@ -121,9 +121,20 @@ public class ObjectProperties : MonoBehaviour
         }
     }
 
+    public void UpdatePosition(Vector3 pos)
+    {
+        transform.position = pos;
+        GetComponent<Rigidbody>().position = pos;
+    }
+
     public virtual void FixedUpdate()
     {
-        UpdateObjectAttraction();
+       
+        if (m_self.m_state != ObjectState.STORED) {
+            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            UpdateObjectAttraction();
+            
+        }
         UpdateObjectOutline();
     }
 }
