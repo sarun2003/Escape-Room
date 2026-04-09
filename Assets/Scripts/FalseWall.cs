@@ -1,12 +1,3 @@
-// FalseWall.cs
-// Attach to the wall segment that hides the Room 3 entrance.
-// The mesh looks identical to Room 1's walls (same material).
-// When the player walks into it, the collider is disabled so they pass through.
-// The mesh stays visible from outside — it only becomes passable from the Room 1 side.
-//
-// Place in Assets/Scripts/
-// Attach to your "FalseWall" GameObject (a thin box with the rusty material).
-
 using System.Collections;
 using UnityEngine;
 
