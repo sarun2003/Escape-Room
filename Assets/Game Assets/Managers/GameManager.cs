@@ -76,8 +76,7 @@ public class GameManager : MonoBehaviour
 
 
                 SceneManager.LoadScene("MainMenu");
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                
                 Destroy(Instance.gameObject);
                 Destroy(Instance);
                 break;
@@ -93,8 +92,7 @@ public class GameManager : MonoBehaviour
                     
                 
                 SceneManager.LoadScene("MainMenu");
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                
                 Destroy(Instance.gameObject);
                 Destroy(Instance);
                 break;
