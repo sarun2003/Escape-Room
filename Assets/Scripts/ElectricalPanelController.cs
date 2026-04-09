@@ -1,3 +1,5 @@
+//ns: this was so obviously written by ai but i dont have time to fix it
+
 // ElectricalPanelController.cs
 // Among Us style: hold click on a plug, drag to socket, release to connect.
 // Uses center-screen raycast + New Input System.
@@ -169,13 +171,13 @@ namespace EscapeRoom
             if (socket.IsCorrect)
             {
                 _correctCount++;
-                SetStatus($"✓ Correct! ({_correctCount}/4 matched)");
+                SetStatus($"Correct! ({_correctCount}/4 matched)");
                 if (_correctCount >= connectors.Count)
                     OnAllWiresMatched();
             }
             else
             {
-                SetStatus("✗ Wrong socket! Try the other wires.");
+                SetStatus("Wrong socket! Try the other wires.");
             }
         }
 
@@ -184,7 +186,7 @@ namespace EscapeRoom
         void OnAllWiresMatched()
         {
             CurrentState = ElectricalPuzzleState.Solved;
-            SetStatus("⚡ Grab the wrench! Time extended by 60 seconds!");
+            SetStatus("Grab the wrench! Time extended by 60 seconds!");
 
             if (GameManager.Instance != null)
             {
@@ -197,6 +199,8 @@ namespace EscapeRoom
 
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlaySFX("door_open", transform.position, 1f);
+            
+            GameObject.FindGameObjectWithTag("LockedDoor1").GetComponent<LockedObjectProperties>().m_interactable.Unlock();
 
             Invoke(nameof(HideCanvas), 4f);
         }
