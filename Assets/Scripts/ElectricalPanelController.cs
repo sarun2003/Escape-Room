@@ -48,7 +48,7 @@ namespace EscapeRoom
         public string sfxConnect   = "wire_connect";
         public string sfxSuccess   = "puzzle_success";
         public string sfxFail      = "explosion";
-        public string sfxUnlock    = "panel_unlock";
+        //public string sfxUnlock    = "panel_unlock";
         public string sfxWrongWire = "wire_wrong";
 
         [Header("Visual Feedback")]
@@ -249,7 +249,7 @@ namespace EscapeRoom
 
                 case ElectricalPuzzleState.Active:
                     SetStatusLight(lightActive);
-                    PlaySFX(sfxUnlock);
+                    //PlaySFX(sfxUnlock);
                     UpdateStatusLabel("Connect the wires");
                     break;
 
