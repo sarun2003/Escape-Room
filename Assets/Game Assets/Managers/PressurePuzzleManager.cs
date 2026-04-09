@@ -9,32 +9,28 @@ public enum PressurePuzzleState
     SOLVED
 }
 
-public class PressurePuzzleManager : MonoBehaviour
-{
+public class PressurePuzzleManager : MonoBehaviour {
 
 
     public static PressurePuzzleManager Instance { get; private set; }
 
 
     [Header("Puzzle Settings")]
-    public float minPressure    = 0f;
-    public float maxPressure    = 100f;
+    public float minPressure = 0f;
+    public float maxPressure = 100f;
     public float targetPressure = 65f;
-    public float pressureStep   = 5f;
+    public float pressureStep = 5f;
 
     public PressurePuzzleState currentState { get; private set; } = PressurePuzzleState.INACTIVE;
     public PressureGauge gauge { get; private set; }
 
     public event System.Action<PressurePuzzleState> OnStateChanged;
 
-    void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
+    void Awake() {
+        if (Instance != null && Instance != this) {
             Destroy(gameObject);
         }
-        else
-        {
+        else {
             Instance = this;
             gauge = new PressureGauge(minPressure, maxPressure, targetPressure, pressureStep);
             gauge.OnTargetReached += HandleTargetReached;
@@ -42,38 +38,40 @@ public class PressurePuzzleManager : MonoBehaviour
         
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (Instance == this)
             Instance = null;
     }
 
-    public void OnPlayerInteract()
-    {
+    public void OnPlayerInteract() {
         if (currentState != PressurePuzzleState.INACTIVE) return;
         TransitionTo(PressurePuzzleState.OPENING);
     }
 
-    public void OnIncrease()
-    {
+    public void OnIncrease() {
         if (currentState != PressurePuzzleState.ACTIVE) return;
         gauge.Increase();
     }
 
-    public void OnDecrease()
-    {
+    public void OnDecrease() {
         if (currentState != PressurePuzzleState.ACTIVE) return;
         gauge.Decrease();
     }
 
-    void HandleTargetReached()
-    {
+    public void OnPlayerClose() {
+        if (currentState != PressurePuzzleState.ACTIVE) return;
+        TransitionTo(PressurePuzzleState.INACTIVE);
+
+        gauge = new PressureGauge(minPressure, maxPressure, targetPressure, pressureStep);
+        gauge.OnTargetReached += HandleTargetReached;
+    }
+
+    void HandleTargetReached() {
         if (currentState != PressurePuzzleState.ACTIVE) return;
         TransitionTo(PressurePuzzleState.SOLVED);
     }
 
-    void TransitionTo(PressurePuzzleState next)
-    {
+    void TransitionTo(PressurePuzzleState next) {
         // on exit
         switch (currentState)
         {
@@ -86,8 +84,7 @@ public class PressurePuzzleManager : MonoBehaviour
         OnStateChanged?.Invoke(currentState);
 
         // on enter
-        switch (currentState)
-        {
+        switch (currentState) {
             case PressurePuzzleState.OPENING:
                 StartCoroutine(OpenRoutine());
                 break;
@@ -100,21 +97,18 @@ public class PressurePuzzleManager : MonoBehaviour
         }
     }
 
-    IEnumerator OpenRoutine()
-    {
+    IEnumerator OpenRoutine() {
         FindObjectOfType<PressurePuzzleUI>().Open(); // uncomment to trigger UI open
         yield return null; // swap for animation(?)
         TransitionTo(PressurePuzzleState.ACTIVE);
     }
 
-    void EnableButtons(bool on)
-    {
+    void EnableButtons(bool on) {
         FindObjectOfType<PressurePuzzleUI>().SetButtonsInteractable(on);
     }
 
-    void OnPuzzleSolved()
-    {
-        // play solve VFX, notify other game systems, etc.
+    void OnPuzzleSolved() {
+        // play vfx(?)
         Debug.Log("Pressure puzzle solved!");
     }
 }
