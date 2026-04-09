@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class PressurePuzzleUI : MonoBehaviour
-{
+public class PressurePuzzleUI : MonoBehaviour {
     [Header("References")]
     public GameObject panel;
     public RectTransform needle;
@@ -19,9 +18,8 @@ public class PressurePuzzleUI : MonoBehaviour
 
     private PressurePuzzleManager manager;
 
-    void Awake()
-    {
-        manager = FindObjectOfType<PressurePuzzleManager>();
+    void Awake() {
+        manager = FindFirstObjectByType<PressurePuzzleManager>();
 
         increaseButton.onClick.AddListener(manager.OnIncrease);
         decreaseButton.onClick.AddListener(manager.OnDecrease);
@@ -36,14 +34,12 @@ public class PressurePuzzleUI : MonoBehaviour
         panel.SetActive(false);
     }
 
-    void OnDestroy()
-    {
+    void OnDestroy() {
         PressurePuzzleManager.Instance.gauge.OnPressureChanged -= RefreshGaugeVisuals;
         PressurePuzzleManager.Instance.OnStateChanged -= HandleStateChanged;
     }
 
-    public void Open()
-    {
+    public void Open() {
         targetText.text = $"Target: {PressurePuzzleManager.Instance.gauge.targetPressure:0}";
         RefreshGaugeVisuals(PressurePuzzleManager.Instance.gauge.currentPressure);
         panel.SetActive(true);
@@ -51,21 +47,18 @@ public class PressurePuzzleUI : MonoBehaviour
         Cursor.visible   = true;
     }
 
-    public void Close()
-    {
+    public void Close() {
         panel.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    public void SetButtonsInteractable(bool on)
-    {
+    public void SetButtonsInteractable(bool on) {
         increaseButton.interactable = on;
         decreaseButton.interactable = on;
     }
 
-    void RefreshGaugeVisuals(float pressure)
-    {
+    void RefreshGaugeVisuals(float pressure) {
         // update needle
         float t = Mathf.InverseLerp(PressurePuzzleManager.Instance.gauge.minPressure, PressurePuzzleManager.Instance.gauge.maxPressure, pressure);
         float angle = Mathf.Lerp(needleMinAngle, needleMaxAngle, t);
@@ -75,8 +68,7 @@ public class PressurePuzzleUI : MonoBehaviour
         pressureText.text = $"{pressure:0} PSI";
     }
 
-    void HandleStateChanged(PressurePuzzleState state)
-    {
+    void HandleStateChanged(PressurePuzzleState state) {
         switch (state)
         {
             case PressurePuzzleState.OPENING:
