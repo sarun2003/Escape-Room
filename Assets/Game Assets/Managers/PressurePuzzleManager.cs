@@ -102,14 +102,14 @@ public class PressurePuzzleManager : MonoBehaviour
 
     IEnumerator OpenRoutine()
     {
-        // FindObjectOfType<PressurePuzzleUI>().Open(); // uncomment to trigger UI open
-        yield return null; // replace with yield return UI open animation coroutine
+        FindObjectOfType<PressurePuzzleUI>().Open(); // uncomment to trigger UI open
+        yield return null; // swap for animation(?)
         TransitionTo(PressurePuzzleState.ACTIVE);
     }
 
     void EnableButtons(bool on)
     {
-        // FindObjectOfType<PressurePuzzleUI>().SetButtonsInteractable(on);
+        FindObjectOfType<PressurePuzzleUI>().SetButtonsInteractable(on);
     }
 
     void OnPuzzleSolved()
