@@ -17,32 +17,32 @@ public class PressurePuzzleUI : MonoBehaviour
     public float needleMinAngle = -120f;  // rotation at min pressure
     public float needleMaxAngle =  120f;  // rotation at max pressure
 
-    private PressurePuzzleManager manager;
+
 
     void Awake()
     {
-        manager = FindObjectOfType<PressurePuzzleManager>();
+        
 
-        increaseButton.onClick.AddListener(manager.OnIncrease);
-        decreaseButton.onClick.AddListener(manager.OnDecrease);
+        increaseButton.onClick.AddListener(PressurePuzzleManager.Instance.OnIncrease);
+        decreaseButton.onClick.AddListener(PressurePuzzleManager.Instance.OnDecrease);
         closeButton.onClick.AddListener(Close);
 
-        manager.gauge.OnPressureChanged += RefreshGaugeVisuals;
-        manager.OnStateChanged          += HandleStateChanged;
+        PressurePuzzleManager.Instance.gauge.OnPressureChanged += RefreshGaugeVisuals;
+        PressurePuzzleManager.Instance.OnStateChanged          += HandleStateChanged;
 
         panel.SetActive(false);
     }
 
     void OnDestroy()
     {
-        manager.gauge.OnPressureChanged -= RefreshGaugeVisuals;
-        manager.OnStateChanged          -= HandleStateChanged;
+        PressurePuzzleManager.Instance.gauge.OnPressureChanged -= RefreshGaugeVisuals;
+        PressurePuzzleManager.Instance.OnStateChanged          -= HandleStateChanged;
     }
 
     public void Open()
     {
-        targetText.text = $"Target: {manager.gauge.targetPressure:0}";
-        RefreshGaugeVisuals(manager.gauge.currentPressure);
+        targetText.text = $"Target: {PressurePuzzleManager.Instance.gauge.targetPressure:0}";
+        RefreshGaugeVisuals(PressurePuzzleManager.Instance.gauge.currentPressure);
         panel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible   = true;
@@ -64,7 +64,7 @@ public class PressurePuzzleUI : MonoBehaviour
     void RefreshGaugeVisuals(float pressure)
     {
         // update needle
-        float t     = Mathf.InverseLerp(manager.gauge.minPressure, manager.gauge.maxPressure, pressure);
+        float t     = Mathf.InverseLerp(PressurePuzzleManager.Instance.gauge.minPressure, PressurePuzzleManager.Instance.gauge.maxPressure, pressure);
         float angle = Mathf.Lerp(needleMinAngle, needleMaxAngle, t);
         needle.localRotation = Quaternion.Euler(0f, 0f, -angle);
 

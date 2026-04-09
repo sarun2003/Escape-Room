@@ -48,15 +48,33 @@ public class GameManager : MonoBehaviour
 
     public void UpdateConditions()
     {
-        if (Instance.ProgressionItems.ContainsKey("DivingGear") &&
-            PlayerInventory.ContainsObject(Instance.ProgressionItems["DivingGear"]))
+        if (!Instance.ProgressionItems.ContainsKey("DivingGear"))
         {
+            Debug.LogError("DivingGear not registered in ProgressionItems!");
+            return;
+        }
+
+        string targetName = Instance.ProgressionItems["DivingGear"].name;
+        bool hasDivingGear = false;
+
+        foreach (var item in PlayerInventory.Items)
+        {
+            if (item == null) continue;
+
+            // Compare by name
+            if (item.m_gameObject.name == targetName)
+            {
+                hasDivingGear = true;
+                break;
+            }
+        }
+
+        if (hasDivingGear)
             Instance.CurrentPlayerState = PlayerState.WIN;
-        }
         else
-        {
             Instance.CurrentPlayerState = PlayerState.DEAD;
-        }
+
+        Debug.Log($"UpdateConditions: hasDivingGear={hasDivingGear}");
     }
 
     public void UpdateScene()
@@ -75,7 +93,7 @@ public class GameManager : MonoBehaviour
                 Destroy(SoundManager.Instance);
 
 
-                SceneManager.LoadScene("MainMenu");
+                SceneManager.LoadScene("scene1");
                 
                 Destroy(Instance.gameObject);
                 Destroy(Instance);

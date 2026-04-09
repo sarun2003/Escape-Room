@@ -171,6 +171,7 @@ public class Inventory
 {
     [SerializeField]
     private Item[] m_items;
+    public Item[] Items => m_items; // read-only property
     
     //Initialize inventory with nulls
     public Inventory(int size)
@@ -184,10 +185,12 @@ public class Inventory
 
     public bool ContainsObject(GameObject obj)
     {
-        for (int i = 0; i < m_items.Length; i++)
-        {   
-            if (m_items[i] == null) return false;
-            if (!m_items[i].Equals(obj)) return true;
+        foreach (var item in m_items)
+        {
+            if (item == null) continue;
+
+            if (item.m_gameObject == obj) // compare reference
+                return true;
         }
         return false;
     }
