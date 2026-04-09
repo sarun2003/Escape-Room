@@ -28,7 +28,7 @@ public class PressurePuzzleUI : MonoBehaviour
         closeButton.onClick.AddListener(Close);
 
         manager.gauge.OnPressureChanged += RefreshGaugeVisuals;
-        manager.OnStateChanged          += HandleStateChanged;
+        manager.OnStateChanged += HandleStateChanged;
 
         panel.SetActive(false);
     }
@@ -36,7 +36,7 @@ public class PressurePuzzleUI : MonoBehaviour
     void OnDestroy()
     {
         manager.gauge.OnPressureChanged -= RefreshGaugeVisuals;
-        manager.OnStateChanged          -= HandleStateChanged;
+        manager.OnStateChanged -= HandleStateChanged;
     }
 
     public void Open()
@@ -64,7 +64,7 @@ public class PressurePuzzleUI : MonoBehaviour
     void RefreshGaugeVisuals(float pressure)
     {
         // update needle
-        float t     = Mathf.InverseLerp(manager.gauge.minPressure, manager.gauge.maxPressure, pressure);
+        float t = Mathf.InverseLerp(manager.gauge.minPressure, manager.gauge.maxPressure, pressure);
         float angle = Mathf.Lerp(needleMinAngle, needleMaxAngle, t);
         needle.localRotation = Quaternion.Euler(0f, 0f, -angle);
 
