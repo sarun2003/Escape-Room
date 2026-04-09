@@ -9,11 +9,9 @@ public enum PressurePuzzleState
     SOLVED
 }
 
-public class PressurePuzzleManager : MonoBehaviour {
-
-
+public class PressurePuzzleManager : MonoBehaviour
+{
     public static PressurePuzzleManager Instance { get; private set; }
-
 
     [Header("Puzzle Settings")]
     public float minPressure = 0f;
@@ -26,89 +24,96 @@ public class PressurePuzzleManager : MonoBehaviour {
 
     public event System.Action<PressurePuzzleState> OnStateChanged;
 
-    void Awake() {
-        if (Instance != null && Instance != this) {
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
             Destroy(gameObject);
+            return;
         }
-        else {
-            Instance = this;
-            gauge = new PressureGauge(minPressure, maxPressure, targetPressure, pressureStep);
-            gauge.OnTargetReached += HandleTargetReached;
-        }
-        
+
+        Instance = this;
+
+        CreateNewGauge();
     }
 
-    private void OnDestroy() {
+    void OnDestroy()
+    {
         if (Instance == this)
             Instance = null;
+
+        if (gauge != null)
+            gauge.OnTargetReached -= HandleTargetReached;
     }
 
-    public void OnPlayerInteract() {
-        if (currentState != PressurePuzzleState.INACTIVE) return;
-        TransitionTo(PressurePuzzleState.OPENING);
-    }
-
-    public void OnIncrease() {
-        if (currentState != PressurePuzzleState.ACTIVE) return;
-        gauge.Increase();
-    }
-
-    public void OnDecrease() {
-        if (currentState != PressurePuzzleState.ACTIVE) return;
-        gauge.Decrease();
-    }
-
-    public void OnPlayerClose() {
-        if (currentState != PressurePuzzleState.ACTIVE) return;
-        TransitionTo(PressurePuzzleState.INACTIVE);
+    void CreateNewGauge()
+    {
+        if (gauge != null)
+            gauge.OnTargetReached -= HandleTargetReached;
 
         gauge = new PressureGauge(minPressure, maxPressure, targetPressure, pressureStep);
         gauge.OnTargetReached += HandleTargetReached;
     }
 
-    void HandleTargetReached() {
+    public void OnPlayerInteract()
+    {
+        if (currentState != PressurePuzzleState.INACTIVE) return;
+        TransitionTo(PressurePuzzleState.OPENING);
+    }
+
+    public void OnIncrease()
+    {
+        if (currentState != PressurePuzzleState.ACTIVE) return;
+        gauge.Increase();
+    }
+
+    public void OnDecrease()
+    {
+        if (currentState != PressurePuzzleState.ACTIVE) return;
+        gauge.Decrease();
+    }
+
+    public void OnPlayerClose()
+    {
+        if (currentState != PressurePuzzleState.ACTIVE) return;
+
+        TransitionTo(PressurePuzzleState.INACTIVE);
+        CreateNewGauge();
+    }
+
+    void HandleTargetReached()
+    {
         if (currentState != PressurePuzzleState.ACTIVE) return;
         TransitionTo(PressurePuzzleState.SOLVED);
     }
 
-    void TransitionTo(PressurePuzzleState next) {
-        // on exit
-        switch (currentState)
-        {
-            case PressurePuzzleState.ACTIVE:
-                EnableButtons(false);
-                break;
-        }
-
+    void TransitionTo(PressurePuzzleState next)
+    {
         currentState = next;
         OnStateChanged?.Invoke(currentState);
 
-        // on enter
-        switch (currentState) {
+        switch (currentState)
+        {
             case PressurePuzzleState.OPENING:
                 StartCoroutine(OpenRoutine());
                 break;
-            case PressurePuzzleState.ACTIVE:
-                EnableButtons(true);
-                break;
+
             case PressurePuzzleState.SOLVED:
                 OnPuzzleSolved();
                 break;
         }
     }
 
-    IEnumerator OpenRoutine() {
-        FindObjectOfType<PressurePuzzleUI>().Open(); // uncomment to trigger UI open
-        yield return null; // swap for animation(?)
+    IEnumerator OpenRoutine()
+    {
+        // Let UI respond via OnStateChanged
+        yield return null;
+
         TransitionTo(PressurePuzzleState.ACTIVE);
     }
 
-    void EnableButtons(bool on) {
-        FindObjectOfType<PressurePuzzleUI>().SetButtonsInteractable(on);
-    }
-
-    void OnPuzzleSolved() {
-        // play vfx(?)
+    void OnPuzzleSolved()
+    {
         Debug.Log("Pressure puzzle solved!");
     }
 }

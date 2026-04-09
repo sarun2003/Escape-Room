@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
-public class PressurePuzzleUI : MonoBehaviour {
+public class PressurePuzzleUI : MonoBehaviour
+{
     [Header("References")]
     public GameObject panel;
     public RectTransform needle;
@@ -13,67 +15,96 @@ public class PressurePuzzleUI : MonoBehaviour {
     public Button closeButton;
 
     [Header("Needle Settings")]
-    public float needleMinAngle = -120f;  // rotation at min pressure
-    public float needleMaxAngle =  120f;  // rotation at max pressure
+    public float needleMinAngle = -120f;
+    public float needleMaxAngle = 120f;
 
-    private PressurePuzzleManager manager;
+    PressurePuzzleManager manager;
 
-    void Awake() {
-        manager = FindFirstObjectByType<PressurePuzzleManager>();
+    void Start()
+    {
+        StartCoroutine(InitWhenReady());
+    }
 
-        increaseButton.onClick.AddListener(manager.OnIncrease);
-        decreaseButton.onClick.AddListener(manager.OnDecrease);
-        closeButton.onClick.AddListener(() => {
+    IEnumerator InitWhenReady()
+    {
+        
+        while (PressurePuzzleManager.Instance == null || PressurePuzzleManager.Instance.gauge == null)
+            yield return null;
+
+        manager = PressurePuzzleManager.Instance;
+
+        // Buttons
+        increaseButton.onClick.AddListener(() => manager.OnIncrease());
+        decreaseButton.onClick.AddListener(() => manager.OnDecrease());
+
+        closeButton.onClick.AddListener(() =>
+        {
             manager.OnPlayerClose();
             Close();
         });
 
+        // Events
         manager.gauge.OnPressureChanged += RefreshGaugeVisuals;
         manager.OnStateChanged += HandleStateChanged;
 
         panel.SetActive(false);
     }
 
-    void OnDestroy() {
-        PressurePuzzleManager.Instance.gauge.OnPressureChanged -= RefreshGaugeVisuals;
-        PressurePuzzleManager.Instance.OnStateChanged -= HandleStateChanged;
+    void OnDestroy()
+    {
+        if (manager != null)
+        {
+            if (manager.gauge != null)
+                manager.gauge.OnPressureChanged -= RefreshGaugeVisuals;
+
+            manager.OnStateChanged -= HandleStateChanged;
+        }
     }
 
-    public void Open() {
-        targetText.text = $"Target: {PressurePuzzleManager.Instance.gauge.targetPressure:0}";
-        RefreshGaugeVisuals(PressurePuzzleManager.Instance.gauge.currentPressure);
+    public void Open()
+    {
+        if (manager == null || manager.gauge == null) return;
+
+        targetText.text = $"Target: {manager.gauge.targetPressure:0}";
+        RefreshGaugeVisuals(manager.gauge.currentPressure);
+
         panel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible   = true;
+        Cursor.visible = true;
     }
 
-    public void Close() {
+    public void Close()
+    {
         panel.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    public void SetButtonsInteractable(bool on) {
+    public void SetButtonsInteractable(bool on)
+    {
         increaseButton.interactable = on;
         decreaseButton.interactable = on;
     }
 
-    void RefreshGaugeVisuals(float pressure) {
-        // update needle
-        float t = Mathf.InverseLerp(PressurePuzzleManager.Instance.gauge.minPressure, PressurePuzzleManager.Instance.gauge.maxPressure, pressure);
+    void RefreshGaugeVisuals(float pressure)
+    {
+        if (manager == null || manager.gauge == null) return;
+
+        float t = Mathf.InverseLerp(manager.gauge.minPressure, manager.gauge.maxPressure, pressure);
         float angle = Mathf.Lerp(needleMinAngle, needleMaxAngle, t);
         needle.localRotation = Quaternion.Euler(0f, 0f, -angle);
 
-        // update readout
         pressureText.text = $"{pressure:0} PSI";
     }
 
-    void HandleStateChanged(PressurePuzzleState state) {
+    void HandleStateChanged(PressurePuzzleState state)
+    {
         switch (state)
         {
             case PressurePuzzleState.OPENING:
                 Open();
                 break;
+
             case PressurePuzzleState.SOLVED:
                 SetButtonsInteractable(false);
                 pressureText.text = "LOCKED";
