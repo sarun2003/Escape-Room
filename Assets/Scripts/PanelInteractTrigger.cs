@@ -1,10 +1,3 @@
-// PanelInteractTrigger.cs
-// Attach to an invisible trigger collider at the entrance of Room 3
-// (or directly in front of the panel). When the player walks in,
-// the panel transitions from Locked → Active.
-//
-// Place in Assets/Scripts/
-
 using UnityEngine;
 
 namespace EscapeRoom

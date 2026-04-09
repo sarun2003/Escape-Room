@@ -1,59 +1,76 @@
-// WireConnector.cs
-// Attach to each wire-plug GameObject on the LEFT side of the panel.
-// The player clicks a left plug, then clicks a right socket to connect them.
-// Place in Assets/Scripts/
-
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace EscapeRoom
 {
-    /// <summary>
-    /// Represents one draggable wire plug on the left side of the panel.
-    /// Notifies ElectricalPanelController when selected and when dropped on a socket.
-    /// </summary>
     [RequireComponent(typeof(Collider))]
     public class WireConnector : MonoBehaviour
     {
         [Header("Wire Identity")]
-        [Tooltip("The color this wire plug represents.")]
         public WireColor wireColor = WireColor.Red;
 
         [Header("Visuals")]
-        [Tooltip("The LineRenderer that draws this wire. Optional — used to show a drawn line.")]
         public LineRenderer lineRenderer;
-
-        [Tooltip("Material tint applied when this wire is selected.")]
         public Color selectedHighlight = Color.white;
 
-        // Internal state
-        private bool _isSelected = false;
-        private ElectricalPanelController _panel;
-        private Color _originalColor;
-        private Renderer _renderer;
+        // State
+        public bool IsConnected { get; private set; } = false;
 
-        private void Awake()
+        private Renderer _renderer;
+        private Color _originalColor;
+
+        void Awake()
         {
-            _panel = GetComponentInParent<ElectricalPanelController>();
             _renderer = GetComponent<Renderer>();
             if (_renderer != null)
                 _originalColor = _renderer.material.color;
         }
 
-        /// <summary>Called by ElectricalPanelController to mark this wire as selected.</summary>
+        /// <summary>Highlight or un-highlight this plug when selected.</summary>
         public void SetSelected(bool selected)
         {
-            _isSelected = selected;
             if (_renderer != null)
                 _renderer.material.color = selected ? selectedHighlight : _originalColor;
         }
 
-        private void OnMouseDown()
+        /// <summary>
+        /// Called by ElectricalPanelController once this plug is dropped into a socket.
+        /// Draws a LineRenderer between plug and socket.
+        /// </summary>
+        public void SetConnected(WireSocket socket)
         {
-            if (_panel == null) return;
-            if (_panel.CurrentState != ElectricalPuzzleState.Active) return;
+            IsConnected = true;
+            SetSelected(false);
 
-            _panel.OnWirePlugSelected(this);
+            if (lineRenderer != null)
+            {
+                // Ensure the line has a visible material (uses Unity's built-in default)
+                if (lineRenderer.material == null || lineRenderer.material.name.Contains("Default-Line") == false)
+                    lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+
+                lineRenderer.enabled = true;
+                lineRenderer.positionCount = 2;
+                lineRenderer.widthMultiplier = 0.05f;
+                lineRenderer.SetPosition(0, transform.position);
+                lineRenderer.SetPosition(1, socket.transform.position);
+
+                Color c = WireColorToUnityColor(wireColor);
+                lineRenderer.startColor = c;
+                lineRenderer.endColor   = c;
+            }
+        }
+
+        /// <summary>Converts WireColor enum to a Unity Color for line rendering.</summary>
+        public static Color WireColorToUnityColor(WireColor wc)
+        {
+            return wc switch
+            {
+                WireColor.Red    => Color.red,
+                WireColor.Blue   => Color.blue,
+                WireColor.Yellow => Color.yellow,
+                WireColor.Green  => Color.green,
+                WireColor.Orange => new Color(1f, 0.5f, 0f),
+                _                => Color.white
+            };
         }
     }
 }

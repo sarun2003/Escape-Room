@@ -1,7 +1,3 @@
-// ElectricalPuzzleState.cs
-// FSM states for the electrical panel puzzle.
-// Place in Assets/Scripts/
-
 namespace EscapeRoom
 {
     public enum ElectricalPuzzleState

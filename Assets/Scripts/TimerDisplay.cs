@@ -1,8 +1,3 @@
-// TimerDisplay.cs
-// Attach to the TimerText GameObject inside HUD/Canvas.
-// Reads TimeLeft from GameManager and displays it as MM:SS.
-// Place in Assets/Scripts/
-
 using UnityEngine;
 using TMPro;
 
