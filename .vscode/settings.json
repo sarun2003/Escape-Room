@@ -67,7 +67,7 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "3d game 1.slnx",
+    "dotnet.defaultSolution": "Escape-Room.slnx",
     "C_Cpp_Runner.cCompilerPath": "gcc",
     "C_Cpp_Runner.cppCompilerPath": "g++",
     "C_Cpp_Runner.debuggerPath": "gdb",
