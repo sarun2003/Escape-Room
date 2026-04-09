@@ -60,28 +60,52 @@ public class GameManager : MonoBehaviour
     }
 
     public void UpdateScene()
-{
-    Debug.Log(Instance.CurrentPlayerState);
-    switch (Instance.CurrentPlayerState)
     {
-        case PlayerState.ACTIVE:
-            break;
-        case PlayerState.DEAD:
-            if (HUDManager.Instance != null)
+        Debug.Log(Instance.CurrentPlayerState);
+        switch (Instance.CurrentPlayerState)
+        {
+            case PlayerState.ACTIVE:
+                break;
+            case PlayerState.DEAD:
                 Destroy(HUDManager.Instance.gameObject);
-            Destroy(Instance.gameObject);
-            SceneManager.LoadScene("MainMenu");
-            break;
-        case PlayerState.WIN:
-            if (HUDManager.Instance != null)
-                Destroy(HUDManager.Instance.gameObject);
-            if (SoundManager.Instance != null)
+                Destroy(HUDManager.Instance);
+            
+            
                 Destroy(SoundManager.Instance.gameObject);
-            Destroy(Instance.gameObject);
-            SceneManager.LoadScene("MainMenu");
-            break;
+                Destroy(SoundManager.Instance);
+
+
+                SceneManager.LoadScene("MainMenu");
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                Destroy(Instance.gameObject);
+                Destroy(Instance);
+                break;
+            case PlayerState.WIN:
+                
+                Destroy(HUDManager.Instance.gameObject);
+                Destroy(HUDManager.Instance);
+            
+            
+                Destroy(SoundManager.Instance.gameObject);
+                Destroy(SoundManager.Instance);
+            
+                    
+                
+                SceneManager.LoadScene("MainMenu");
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                Destroy(Instance.gameObject);
+                Destroy(Instance);
+                break;
+        }
     }
-}
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
 
     private GameObject[] FindGameObjectsInLayer(int[] layers)
     {

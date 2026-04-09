@@ -9,7 +9,7 @@ public class PressureButtonUI : MonoBehaviour
 
     void Awake()
     {
-        var manager = FindObjectOfType<PressurePuzzleManager>();
+        var manager = PressurePuzzleManager.Instance;
         GetComponent<Button>().onClick.AddListener(
             isIncrement ? manager.OnIncrease : manager.OnDecrease
         );

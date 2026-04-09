@@ -70,6 +70,12 @@ public class SoundManager : MonoBehaviour
         LoadAllLoops();
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     private void LoadAllAudio()
     {
         
@@ -175,28 +181,31 @@ public class SoundManager : MonoBehaviour
     void Update()
     {
         
-
-        if (Instance.intervals.walk <= 0)
+        if (Instance.gameObject != null)
         {
-            if (GameManager.Instance.PlayerParent.GetComponent<StarterAssetsInputs>().move != Vector2.zero && GameManager.Instance.PlayerParent.GetComponent<FirstPersonController>().Grounded)
+            if (Instance.intervals.walk <= 0)
             {
-                if (GameManager.Instance.PlayerParent.GetComponent<StarterAssetsInputs>().sprint)
+                if (GameManager.Instance.PlayerParent.GetComponent<StarterAssetsInputs>().move != Vector2.zero && GameManager.Instance.PlayerParent.GetComponent<FirstPersonController>().Grounded)
                 {
-                    Instance.intervals.walk = 0.3f;
+                    if (GameManager.Instance.PlayerParent.GetComponent<StarterAssetsInputs>().sprint)
+                    {
+                        Instance.intervals.walk = 0.3f;
+                    } else
+                    {
+                        Instance.intervals.walk = 0.45f;
+                    }
+                    
+                    Instance.PlaySFX("Walking", GameManager.Instance.Player.transform.position, 0.5f);
                 } else
                 {
-                    Instance.intervals.walk = 0.45f;
+                    Instance.intervals.walk = 0;
                 }
-                
-                Instance.PlaySFX("Walking", GameManager.Instance.Player.transform.position, 0.5f);
             } else
             {
-                Instance.intervals.walk = 0;
-            }
-        } else
-        {
-            Instance.intervals.walk -= Time.deltaTime;
+                Instance.intervals.walk -= Time.deltaTime;
+            }  
         }
+        
         
     }
 

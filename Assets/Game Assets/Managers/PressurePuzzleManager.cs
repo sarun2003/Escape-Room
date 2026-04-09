@@ -11,6 +11,11 @@ public enum PressurePuzzleState
 
 public class PressurePuzzleManager : MonoBehaviour
 {
+
+
+    public static PressurePuzzleManager Instance { get; private set; }
+
+
     [Header("Puzzle Settings")]
     public float minPressure    = 0f;
     public float maxPressure    = 100f;
@@ -24,8 +29,23 @@ public class PressurePuzzleManager : MonoBehaviour
 
     void Awake()
     {
-        gauge = new PressureGauge(minPressure, maxPressure, targetPressure, pressureStep);
-        gauge.OnTargetReached += HandleTargetReached;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            gauge = new PressureGauge(minPressure, maxPressure, targetPressure, pressureStep);
+            gauge.OnTargetReached += HandleTargetReached;
+        }
+        
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
     }
 
     public void OnPlayerInteract()

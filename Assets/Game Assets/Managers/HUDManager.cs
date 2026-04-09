@@ -23,6 +23,12 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     void Update()
     {
         if (GameManager.Instance.PlayerHoveringObject || GameManager.Instance.CurrentPlayerInputState == PlayerInputState.HOLDING)

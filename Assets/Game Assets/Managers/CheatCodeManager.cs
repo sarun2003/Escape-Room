@@ -79,7 +79,11 @@ public class CheatCodeManager : MonoBehaviour
     }
 
     
-
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
    
     void UpdateKD()
     {
